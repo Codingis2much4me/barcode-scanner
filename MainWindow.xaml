@@ -1,0 +1,226 @@
+<Window x:Class="StudentBarcodeApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:StudentBarcodeApp"
+        Title="Student Barcode Scanner" Height="600" Width="800"
+        MinHeight="500" MinWidth="600"
+        WindowStartupLocation="CenterScreen">
+    
+    <Window.Resources>
+        <Style x:Key="HeaderTextStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#2E3440"/>
+            <Setter Property="Margin" Value="0,0,0,20"/>
+        </Style>
+        
+        <Style x:Key="LabelStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#4C566A"/>
+            <Setter Property="Margin" Value="0,5,0,2"/>
+        </Style>
+        
+        <Style x:Key="ValueStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Foreground" Value="#2E3440"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+        </Style>
+        
+        <Style x:Key="ButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#5E81AC"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="15,8"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#81A1C1"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#4C566A"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        
+        <Style x:Key="StatusTextStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="#5E81AC"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <TextBlock Grid.Row="0" Text="Student Information System" 
+                   Style="{StaticResource HeaderTextStyle}"
+                   HorizontalAlignment="Center"/>
+
+        <!-- Control Panel -->
+        <Border Grid.Row="1" Background="#ECEFF4" CornerRadius="8" Padding="15" Margin="0,0,0,20">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Scanner Status -->
+                <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Margin="0,0,0,10">
+                    <TextBlock Text="{Binding ScanningStatusText}" Style="{StaticResource StatusTextStyle}"/>
+                    <Ellipse Width="10" Height="10" Margin="10,0,0,0">
+                        <Ellipse.Style>
+                            <Style TargetType="Ellipse">
+                                <Setter Property="Fill" Value="#BF616A"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsScanning}" Value="True">
+                                        <Setter Property="Fill" Value="#A3BE8C"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Ellipse.Style>
+                    </Ellipse>
+                </StackPanel>
+
+                <!-- Manual Search -->
+                <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
+                    <TextBlock Text="Manual Search:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                    <TextBox Text="{Binding ManualRollNumber, UpdateSourceTrigger=PropertyChanged}" 
+                             Width="150" Padding="5" VerticalAlignment="Center"/>
+                    <Button Content="Search" Command="{Binding SearchManualCommand}" 
+                            Style="{StaticResource ButtonStyle}" Margin="10,0,0,0"/>
+                </StackPanel>
+
+                <!-- Control Buttons -->
+                <StackPanel Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button Content="Toggle Scanner" Command="{Binding ToggleScanningCommand}" 
+                            Style="{StaticResource ButtonStyle}"/>
+                    <Button Content="Clear" Command="{Binding ClearCommand}" 
+                            Style="{StaticResource ButtonStyle}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Student Information Display -->
+        <Border Grid.Row="2" Background="White" BorderBrush="#D8DEE9" BorderThickness="1" 
+                CornerRadius="8" Padding="20">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <Grid>
+                    <!-- Student Information Grid -->
+                    <Grid>
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding CurrentStudent, Converter={x:Static local:NullToBooleanConverter.Instance}}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
+                        
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Student Name (spans both columns) -->
+                        <StackPanel Grid.Row="0" Grid.ColumnSpan="2" Margin="0,0,0,20">
+                            <TextBlock Text="Student Name" Style="{StaticResource LabelStyle}"/>
+                            <TextBlock Text="{Binding CurrentStudent.FullName}" 
+                                       Style="{StaticResource ValueStyle}" FontSize="20" FontWeight="Bold"/>
+                        </StackPanel>
+
+                        <!-- Left Column -->
+                        <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,20,0">
+                            <TextBlock Text="Roll Number" Style="{StaticResource LabelStyle}"/>
+                            <TextBlock Text="{Binding CurrentStudent.RollNumber}" Style="{StaticResource ValueStyle}"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,20,0">
+                            <TextBlock Text="Email" Style="{StaticResource LabelStyle}"/>
+                            <TextBlock Text="{Binding CurrentStudent.Email}" Style="{StaticResource ValueStyle}"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="3" Grid.Column="0" Margin="0,0,20,0">
+                            <TextBlock Text="Course" Style="{StaticResource LabelStyle}"/>
+                            <TextBlock Text="{Binding CurrentStudent.Course}" Style="{StaticResource ValueStyle}"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="4" Grid.Column="0" Margin="0,0,20,0">
+                            <TextBlock Text="Department" Style="{StaticResource LabelStyle}"/>
+                            <TextBlock Text="{Binding CurrentStudent.Department}" Style="{StaticResource ValueStyle}"/>
+                        </StackPanel>
+
+                        <!-- Right Column -->
+                        <StackPanel Grid.Row="1" Grid.Column="1">
+                            <TextBlock Text="Year" Style="{StaticResource LabelStyle}"/>
+                            <TextBlock Text="{Binding CurrentStudent.Year}" Style="{StaticResource ValueStyle}"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="2" Grid.Column="1">
+                            <TextBlock Text="Phone Number" Style="{StaticResource LabelStyle}"/>
+                            <TextBlock Text="{Binding CurrentStudent.PhoneNumber}" Style="{StaticResource ValueStyle}"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="3" Grid.Column="1">
+                            <TextBlock Text="Enrollment Date" Style="{StaticResource LabelStyle}"/>
+                            <TextBlock Text="{Binding CurrentStudent.EnrollmentDate, StringFormat='{}{0:MMM dd, yyyy}'}" 
+                                       Style="{StaticResource ValueStyle}"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="4" Grid.Column="1">
+                            <TextBlock Text="Status" Style="{StaticResource LabelStyle}"/>
+                            <TextBlock Text="{Binding CurrentStudent.Status}" Style="{StaticResource ValueStyle}"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- No Student Message -->
+                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+                               FontSize="18" Foreground="#8FBCBB" FontStyle="Italic">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Visible"/>
+                                <Setter Property="Text" Value="Scan a barcode or enter a roll number to view student information"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding CurrentStudent, Converter={x:Static local:NullToBooleanConverter.Instance}}" Value="True">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Grid>
+            </ScrollViewer>
+        </Border>
+
+        <!-- Status Bar -->
+        <Border Grid.Row="3" Background="#4C566A" CornerRadius="4" Margin="0,20,0,0" Padding="10">
+            <TextBlock Text="{Binding StatusMessage}" Style="{StaticResource StatusTextStyle}" 
+                       Foreground="White" HorizontalAlignment="Center"/>
+        </Border>
+    </Grid>
+</Window>
