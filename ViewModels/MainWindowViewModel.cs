@@ -9,8 +9,10 @@ using StudentBarcodeApp.Services;
 
 namespace StudentBarcodeApp.ViewModels
 {
+    // ViewModel for the main window. Owns UI state and coordinates services.
     public class MainWindowViewModel : INotifyPropertyChanged
     {
+        // Services are injected to keep code-behind thin and testable.
         private readonly IDatabaseService _databaseService;
         private readonly IBarcodeService _barcodeService;
         private readonly ILogger<MainWindowViewModel> _logger;
@@ -24,6 +26,7 @@ namespace StudentBarcodeApp.ViewModels
 
         public Student? CurrentStudent
         {
+            // Notify UI when the selected student changes.
             get => _currentStudent;
             set
             {
@@ -34,6 +37,7 @@ namespace StudentBarcodeApp.ViewModels
 
         public string StatusMessage
         {
+            // Short status text shown in the footer.
             get => _statusMessage;
             set
             {
@@ -44,6 +48,7 @@ namespace StudentBarcodeApp.ViewModels
 
         public bool IsScanning
         {
+            // Backed by the service; also updates ScanningStatusText.
             get => _isScanning;
             set
             {
@@ -57,6 +62,7 @@ namespace StudentBarcodeApp.ViewModels
 
         public string ManualRollNumber
         {
+            // Two-way bound to the manual search TextBox.
             get => _manualRollNumber;
             set
             {
@@ -74,6 +80,7 @@ namespace StudentBarcodeApp.ViewModels
             IBarcodeService barcodeService,
             ILogger<MainWindowViewModel> logger)
         {
+            // Store dependencies and wire up commands/events.
             _databaseService = databaseService;
             _barcodeService = barcodeService;
             _logger = logger;
@@ -84,12 +91,13 @@ namespace StudentBarcodeApp.ViewModels
 
             _barcodeService.BarcodeScanned += OnBarcodeScanned;
             
-            // Initialize database and start scanning
+            // Initialize database and start listening so the app is usable right away.
             _ = InitializeAsync();
         }
 
         private async Task InitializeAsync()
         {
+            // Create DB file if missing, apply simple schema checks, then start scanner.
             try
             {
                 await _databaseService.InitializeDatabaseAsync();
@@ -105,11 +113,13 @@ namespace StudentBarcodeApp.ViewModels
 
         private async void OnBarcodeScanned(string rollNumber)
         {
+            // Event from the barcode service -> run a lookup.
             await SearchForStudent(rollNumber);
         }
 
         private async Task SearchForStudent(string rollNumber)
         {
+            // Show progress in the status bar, then update CurrentStudent (or clear if not found).
             try
             {
                 StatusMessage = $"Searching for student: {rollNumber}...";
@@ -139,6 +149,7 @@ namespace StudentBarcodeApp.ViewModels
 
         private void ToggleScanning()
         {
+            // Flip the service state and update UI text accordingly.
             if (IsScanning)
             {
                 _barcodeService.StopListening();
@@ -155,6 +166,7 @@ namespace StudentBarcodeApp.ViewModels
 
         private async void SearchManual()
         {
+            // Manual lookup from the TextBox, trimming obvious whitespace.
             if (!string.IsNullOrWhiteSpace(ManualRollNumber))
             {
                 await SearchForStudent(ManualRollNumber.Trim());
@@ -163,6 +175,7 @@ namespace StudentBarcodeApp.ViewModels
 
         private void Clear()
         {
+            // Reset UI to a friendly default.
             CurrentStudent = null;
             ManualRollNumber = string.Empty;
             StatusMessage = IsScanning ? "Ready to scan barcode..." : "Barcode scanning stopped.";
@@ -170,10 +183,12 @@ namespace StudentBarcodeApp.ViewModels
 
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
+            // Standard INotifyPropertyChanged pattern.
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 
+    // Simple ICommand wrapper for button clicks.
     public class RelayCommand : ICommand
     {
         private readonly Action _execute;

@@ -1,71 +1,53 @@
-# .NET Core / .NET
-## Build results
-[Dd]ebug/
-[Dd]ebugPublic/
-[Rr]elease/
-[Rr]eleases/
-x64/
-x86/
-[Ww][Ii][Nn]32/
-[Aa][Rr][Mm]/
-[Aa][Rr][Mm]64/
-bld/
+# .NET build output
+bin/
+obj/
 [Bb]in/
 [Oo]bj/
-[Ll]og/
-[Ll]ogs/
+[Bb]uild/
 
-## Visual Studio
+# Publish/output
+publish/
+dist/
+out/
+
+# Visual Studio (if used)
 .vs/
-.vscode/
-*.suo
 *.user
+*.suo
 *.userosscache
 *.sln.docstates
-*.userprefs
-*.dbmdl
-*.dbproj.schemaview
-*.jfm
-*.pfx
-*.publishsettings
-orleans.codegen.cs
+*.csproj.user
 
-## Visual Studio code coverage results
-*.coverage
-*.coveragexml
+# VS Code - keep common workspace files
+.vscode/*
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
 
-## NuGet Packages
-*.nupkg
-*.snupkg
-**/[Pp]ackages/*
-!**/[Pp]ackages/build/
-*.nuget.props
-*.nuget.targets
-
-## SQLite database files
-*.db
-*.db-shm
-*.db-wal
-
-## Windows
-# Windows thumbnail cache files
-Thumbs.db
-Thumbs.db:encryptable
-ehthumbs.db
-ehthumbs_vista.db
-
-# Dump file
-*.stackdump
-
-# Folder config file
-[Dd]esktop.ini
-
-# Recycle Bin used on file shares
-.BIN/
-
-# Windows shortcuts
-*.lnk
-
-## JetBrains Rider
+# JetBrains Rider
 .idea/
 *.sln.iml
+
+# NuGet/packages
+packages/
+*.nupkg
+*.snupkg
+.nuget/
+*.cache
+
+# Logs and dumps
+*.log
+*.dmp
+*.tmp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# SQLite sidecar files (DB lives in bin/, but ignore sidecars just in case)
+*.db-wal
+*.db-shm
+
+# Optional: ignore local SQLite databases
+# Uncomment if you don't want to ever commit any .db files
+# *.db
